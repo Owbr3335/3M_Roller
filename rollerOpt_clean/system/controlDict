@@ -1,0 +1,90 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.2.2                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version         2.0;
+    format          ascii;
+    class           dictionary;
+    object          controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+libs ( "libOpenFOAM.so" "libgroovyBC.so" ) ;
+
+application     fireFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime		2500;
+
+deltaT		1;
+
+writeControl    adjustableRunTime;
+
+writeInterval   10;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression uncompressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+graphFormat     raw;
+
+runTimeModifiable yes;
+
+adjustTimeStep  yes;
+
+maxCo           1;
+
+maxDeltaT       1e-1;
+
+allowSystemOperations true;
+
+functions
+{
+    patchVariance
+    {
+        // Load the library containing the 'coded' functionObject
+        libs ("libutilityFunctionObjects.so");
+
+        type coded;
+        name patchVariance;
+
+        codeEnd
+        #{
+            const volScalarField& T = mesh().lookupObject<volScalarField>("T");
+	    Foam::label patchI = mesh().boundaryMesh().findPatchID("roller");
+	    const Foam::fvPatch& currPatch = mesh().boundary()[patchI];
+
+	    Foam::scalar patchMean = gSum(T.boundaryField()[patchI])/currPatch.size();
+	    Foam::scalar patchNorm = 0;
+
+	    forAll(currPatch,facei){
+		patchNorm += pow((T.boundaryField()[patchI][facei] - patchMean),2);
+	    }
+
+	    Foam::scalar patchVar = patchNorm/currPatch.size();
+
+	    Info << "Patch Mean : " << patchMean << nl;
+	    Info << "Patch Variance : " << patchVar << nl;
+        #};
+    }
+}
+
+// ************************************************************************* //

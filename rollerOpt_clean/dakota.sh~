@@ -1,0 +1,108 @@
+#!/bin/bash
+
+#Adapted from tutorial located at: http://www.holzmann-cfd.de/index.php/en/
+# $1 change from DAKOTA to OF file
+# $2 pipe OF output to DAKOTA
+
+# Update OF temperature through DAKOTA
+# ------------------------------------------------------------------------------
+dprepro $1 system/dakotaParameters.orig system/dakotaParameters
+
+# Run simulation with new parameter set
+# ------------------------------------------------------------------------------
+    
+    # Get parameters and remove possible scientific notation
+    #---------------------------------------------------------------------------
+    burnerT=`head -5 system/dakotaParameters | tail -1 | cut -d'=' -f2`
+    rollerOmega=`head -6 system/dakotaParameters | tail -1 | cut -d'=' -f2`
+    burnerUy=`head -7 system/dakotaParameters | tail -1 | cut -d'=' -f2`
+    rollerDist=`head -8 system/dakotaParameters | tail -1 | cut -d'=' -f2`
+    #burnerT=`echo $burnerT | sed -e 's/[eE]+*/\*10\^/'`
+    #rollerOmega=`echo $rollerOmega | sed -e 's/[eE]+*/\*10\^/'`
+    #burnerUy=`echo $burnerUy | sed -e 's/[eE]+*/\*10\^/'`
+
+    # Print current loop number and parameter values
+    #---------------------------------------------------------------------------
+    loopNumber=`cat .optimizationLoop`
+    >&2 echo -e ""
+    >&2 echo -e "Optimization Iteration $loopNumber"
+    >&2 echo -e "Inlet Temperature = $burnerT"
+    >&2 echo -e "Roller Angular Velocity = $rollerOmega"
+    >&2 echo -e "Inlet Vertical Velocity = $burnerUy"
+    >&2 echo -e "Roller Vertical Separation = $rollerDist"
+    >&2 echo -e ""
+    
+    # Set new parameter values
+    #---------------------------------------------------------------------------
+    cp -rf 0_backup 0
+    
+    sed -i "40s/.*/	value		uniform $burnerT;/" 0/T
+    sed -i "29s/.*/	omega		$rollerOmega;/" 0/U
+    sed -i "36s/.*/	value		uniform (0 $burnerUy 0);/" 0/U
+    
+    cp system/moveRollerDict system/moveRoller
+    sed "s/rollerDist/$rollerDist/" system/moveRoller -i
+    sed -i "27s/.*/	origin		(0 $rollerDist 0.05);/" 0/U
+    
+    # Create mesh
+    #---------------------------------------------------------------------------
+    source createMesh
+
+    # Make folder for log files
+    #---------------------------------------------------------------------------
+    logFolder="runLogs/Optimization"$loopNumber
+    mkdir -p $logFolder
+
+    # Run OpenFOAM
+    #---------------------------------------------------------------------------
+    source runSolver
+
+    # Get Desired Quantities
+    #---------------------------------------------------------------------------
+
+    meanT=`grep -r "Patch Mean : " log.fireDyMFoam | awk '{print $4}'`
+
+    varT=`grep -r "Patch Variance : " log.fireDyMFoam | awk '{print $4}'`
+    varT=`echo ${varT} | sed -e 's/[eE]+*/\\*10\\^/'`
+
+    # Update cost function
+    #---------------------------------------------------------------------------
+
+    #func1=`echo "(400 - $meanT)^2" | bc -l`
+    #func2=`echo $varT`
+    #func=`echo "0.25*$func1/($func1+$func2) + 0.75*$func2/($func1+$func2)" | bc -l`
+    func=`echo "(400 - $meanT)^2 + $varT" | bc -l`
+
+    echo $func > .dakotaInput.dak
+    echo -e "$func" >> costFunc.dat
+
+    >&2 echo -e ""
+    >&2 echo "Roller Temperature Mean : $meanT"
+    >&2 echo "Roller Temperature Variance : $varT"
+    >&2 echo "Cost Function : $func"
+    >&2 echo -e ""
+    
+    mv log* $logFolder
+    finalTime=$(foamListTimes tail -1)
+    
+    >&2 echo "Final Time : " $finalTime
+    
+    mv $finalTime $logFolder
+    cp -rf constant $logFolder
+    cp -rf system $logFolder
+
+    # Clean Case
+    #---------------------------------------------------------------------------
+    source Allclean
+
+    # Increase the loop number and store in dummy file
+    #--------------------------------------------------------------------------
+    echo $((loopNumber+1)) > .optimizationLoop
+
+# Pipe output file to DAKOTA
+#------------------------------------------------------------------------------
+cp .dakotaInput.dak $2
+
+sleep 1
+
+#------------------------------------------------------------------------------

@@ -1,0 +1,34 @@
+#!/bin/bash
+
+#------------------------------------------------------------------------------
+
+dakotaInputFile="system/dakotaDict"
+dakotaOutputFile="dakotaLog"
+optimizationLogFile="optimizationLog"
+
+#------------------------------------------------------------------------------
+echo -e "Tutorial by Tobias Holzmann, adapted by Caelan Lapointe"
+
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+echo ""
+echo "Starting Optimization with Dakota"
+
+#### DAKOTA ####
+if [ `which dakota | grep 'dakota' -c` == 1 ];
+then
+    echo "1" > .optimizationLoop
+    dakota -i $dakotaInputFile -o $dakotaOutputFile > $optimizationLogFile &
+    wait
+else
+    echo "No DAKOTA application available"
+fi
+
+best=`grep 'Best data' dakotaLog | cut -d' ' -f8`
+echo -e "Best result with optimization $best"
+
+#------------------------------------------------------------------------------
+
+echo "run finished"
+

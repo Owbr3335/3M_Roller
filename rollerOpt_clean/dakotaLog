@@ -1,0 +1,111 @@
+Dakota version 6.5 released Nov 11 2016.
+Repository revision f928f89 (2016-11-10) built Nov 11 2016 04:27:33.
+Running MPI Dakota executable in serial mode.
+Start time: Wed Feb 20 15:13:55 2019
+
+-----------------------
+Begin DAKOTA input file
+system/dakotaDict
+-----------------------
+# Dakota Input File
+#
+#-----------------------------------------------------------------------------
+
+
+environment
+    tabular_graphics_data
+        tabular_graphics_file = 'dakotaData.dat'
+
+method
+
+    ### For LHS ###
+    #sampling
+    #    sample_type = lhs 
+    #    samples     = 500
+    #    seed        = 123456
+
+    ### For QN ###
+    max_iterations = 1000
+    convergence_tolerance = 1e-3
+    optpp_q_newton
+	search_method gradient_based_line_search
+
+model
+    single
+
+variables
+    continuous_design = 4
+        descriptors   =		'burnerT'	'rollerOmega'	'burnerUy'  'rollerDist'
+        initial_point =		1000		15		0.5     0.15
+        lower_bounds  =		300	 	3		0       0.135
+        upper_bounds  =		1800		20		1       0.225
+
+interface
+    fork
+        analysis_driver = 'dakota.sh'
+        parameters_file = 'params.in'
+        results_file    = 'results.out'
+    aprepro
+
+    deactivate active_set_vector
+
+responses
+    objective_functions = 1
+    
+    ### For LHS ###
+    #no_hessians
+    #no_gradients
+    
+    ### For QN ###
+    numerical_gradients
+        method_source dakota
+        interval_type central
+        fd_gradient_step_size = 1e-3 
+    no_hessians
+
+#-----------------------------------------------------------------------------
+---------------------
+End DAKOTA input file
+---------------------
+
+Using Dakota input file 'system/dakotaDict'
+Writing new restart file dakota.rst
+
+>>>>> Executing environment.
+
+>>>>> Running optpp_q_newton iterator.
+
+------------------------------------------
+Begin Dakota derivative estimation routine
+------------------------------------------
+
+>>>>> Initial map for analytic portion of response:
+
+---------------------
+Begin Evaluation    1
+---------------------
+Parameters for evaluation 1:
+                      1.0000000000e+03 burnerT
+                      1.5000000000e+01 rollerOmega
+                      5.0000000000e-01 burnerUy
+                      1.5000000000e-01 rollerDist
+
+blocking fork: dakota.sh params.in results.out
+
+Active response data for evaluation 1:
+Active set vector = { 1 }
+                      2.6189843481e+04 obj_fn
+
+
+>>>>> Dakota finite difference gradient evaluation for x[1] + h:
+
+---------------------
+Begin Evaluation    2
+---------------------
+Parameters for evaluation 2:
+                      1.0010000000e+03 burnerT
+                      1.5000000000e+01 rollerOmega
+                      5.0000000000e-01 burnerUy
+                      1.5000000000e-01 rollerDist
+
+blocking fork: dakota.sh params.in results.out
