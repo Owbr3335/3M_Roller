@@ -1,0 +1,49 @@
+/*---------------------------------------------------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+Build  : dev-cabe48fb62c1
+Exec   : flattenMesh
+Date   : Apr 15 2019
+Time   : 13:33:47
+Host   : "Host"
+PID    : 5028
+I/O    : uncollated
+Case   : /home/tesla/OpenFOAM/tesla-dev/run/rollerOpt_COBYLA_NEW
+nProcs : 1
+sigFpe : Enabling floating point exception trapping (FOAM_SIGFPE).
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 10)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+--> FOAM Warning : 
+    From function void* Foam::dlOpen(const Foam::fileName&, bool)
+    in file POSIX.C at line 1268
+    dlopen error : libgroovyBC.so: cannot open shared object file: No such file or directory
+--> FOAM Warning : 
+    From function bool Foam::dlLibraryTable::open(const Foam::fileName&, bool)
+    in file db/dynamicLibrary/dlLibraryTable/dlLibraryTable.C at line 105
+    could not load "libgroovyBC.so"
+Create polyMesh for time = 0
+
+bounding box: min = (-1 -2.73706e-42 0) max = (1 1 0.1) meters.
+--> FOAM Warning : 
+    From function void Foam::twoDPointCorrector::calcAddressing() const
+    in file twoDPointCorrector/twoDPointCorrector.C at line 151
+    the number of vertices in the geometry is odd - this should not be the case for a 2-D case. Please check the geometry.
+--> FOAM Warning : 
+    From function void Foam::twoDPointCorrector::calcAddressing() const
+    in file twoDPointCorrector/twoDPointCorrector.C at line 160
+    The number of points in the mesh is not equal to twice the number of edges normal to the plane - this may be OK only for wedge geometries.
+    Please check the geometry or adjust the orthogonality tolerance.
+
+Number of normal edges: 23874 number of points: 34055
+Writing points into directory "/home/tesla/OpenFOAM/tesla-dev/run/rollerOpt_COBYLA_NEW/constant/polyMesh"
+
+End
+

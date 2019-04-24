@@ -1,0 +1,128 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  dev                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      fvOptions;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+/*temperatureSource1
+{
+    type            fixedTemperatureConstraint;
+    active          yes;
+
+    fixedTemperatureConstraintCoeffs
+    {
+        timeStart       0.25;
+        duration        0.5;
+        selectionMode   cellSet;
+        cellSet         c1;
+
+        mode            uniform;
+        temperature     2000;
+    }
+}*/
+
+/*heatSource
+{
+    type            scalarSemiImplicitSource;
+    active          true;
+
+    scalarSemiImplicitSourceCoeffs
+    {
+	timeStart       0.25;
+	duration        2;
+	//selectionMode	cellSet;
+	//cellSet		c0;
+
+        selectionMode   points;
+        points
+        (
+	    (0.245 0.001 0.05)
+            (0.255 0.001 0.05)
+        );
+
+        volumeMode      absolute;
+
+        injectionRateSuSp
+        {
+            h     (400 0);
+        }
+    }
+}*/
+
+/*heatSource 
+{ 
+    type            scalarCodedSource;
+    active          true;
+    name	    sourceTime;
+
+    scalarCodedSourceCoeffs
+    {
+	fields		(h);
+	selectionMode   all;
+
+	codeInclude
+	#{
+	#};
+
+	codeCorrect
+	#{
+	#};
+
+        codeAddSup
+        #{
+            const Time& time = mesh().time();
+            const scalarField& V = mesh_.V();
+	    const vectorField& C = mesh_.C();
+            scalarField& heSource = eqn.source();
+	    scalar xMin = 0.0485;
+	    scalar xMax = 0.0515;
+	    scalar yMin = 0.0025;
+	    scalar yMax = 0.0055;
+
+	    if(time.value() > 0.25 && time.value() < 0.75){
+		forAll(V,i){
+		    if(C[i].component(0) > xMin && C[i].component(0) < xMax){
+			if(C[i].component(1) > yMin && C[i].component(1) < yMax){
+			    heSource[i] -= 10;
+			}else{
+			    heSource[i] -= 0;
+			}
+		    }
+		}
+	    }
+        #};
+
+	codeSetValue
+	#{
+	#};
+
+        // Dummy entry. Make dependent on above to trigger recompilation
+        code
+        #{
+	    $codeInclude
+	    $codeCorrect
+	    $codeAddSup
+	    $codeSetValue
+        #};
+    }
+
+    sourceTimeCoeffs
+    {
+        // Dummy entry
+    }
+}*/
+
+
+
+// ************************************************************************* //

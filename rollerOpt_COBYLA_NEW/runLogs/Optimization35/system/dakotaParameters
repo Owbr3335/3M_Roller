@@ -1,0 +1,8 @@
+//- This file contains the parameters that can be changed
+//  Dakota will change the parameters with {} and the name 
+//  corresponds to the variables in the dakotaDict
+
+burnerT = 1.044975217704654e+03
+rollerOmega = 1.496237524424837e+01
+burnerUy = 2.273423882551394e-01
+rollerDist = 1.615924308056062e-01

@@ -1,0 +1,147 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.2.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      turbulenceProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+//simulationType	laminar;
+simulationType	RAS;
+//simulationType		LES;
+
+/*LES
+{
+	turbulence 	on;
+
+	LESModel        kEqn;
+
+	printCoeffs     on;
+
+	delta           vanDriest;
+
+	cubeRootVolCoeffs
+	{
+	    deltaCoeff      1;
+	}
+
+	PrandtlCoeffs
+	{
+	    delta           cubeRootVol;
+	    cubeRootVolCoeffs
+	    {
+	        deltaCoeff      1;
+	    }
+	
+	    smoothCoeffs
+	    {
+	        delta           cubeRootVol;
+	        cubeRootVolCoeffs
+	        {
+	            deltaCoeff      1;
+	        }
+	
+	        maxDeltaRatio   1.1;
+	    }
+	
+	    Cdelta          0.158;
+	}
+	
+	vanDriestCoeffs
+	{
+	    delta           cubeRootVol;
+	    cubeRootVolCoeffs
+	    {
+	        deltaCoeff      1;
+	    }
+	
+	    smoothCoeffs
+	    {
+	        delta           cubeRootVol;
+	        cubeRootVolCoeffs
+	        {
+	            deltaCoeff      1;
+	        }
+	
+	        maxDeltaRatio   1.1;
+	    }
+	
+	    Aplus           26;
+	    Cdelta          0.158;
+	}
+	
+	smoothCoeffs
+	{
+	    delta           cubeRootVol;
+	    cubeRootVolCoeffs
+	    {
+	        deltaCoeff      1;
+	    }
+	
+	    maxDeltaRatio   1.1;
+	}
+
+kEqnCoeffs
+{
+    delta           cubeRootVol;
+    cubeRootVolCoeffs
+    {
+        deltaCoeff      1;
+    }
+
+    smoothCoeffs
+    {
+        delta           cubeRootVol;
+        cubeRootVolCoeffs
+        {
+            deltaCoeff      1;
+        }
+
+        maxDeltaRatio   1.1;
+    }
+
+    Aplus           26;
+    Cdelta          0.158;
+
+    filter		simple;
+}*/
+
+RAS
+{
+	RASModel            kOmegaSST;
+
+	kOmegaSSTCoeffs
+	{
+		delta           cubeRootVol;
+
+		cubeRootVolCoeffs
+		{
+		    deltaCoeff      1;
+		}
+	}
+
+	kEpsilonCoeffs
+	{
+		delta           cubeRootVol;
+
+		cubeRootVolCoeffs
+		{
+		    deltaCoeff      1;
+		}
+	}
+
+	turbulence          on;
+
+	printCoeffs         on;
+}
+
+// ************************************************************************* //

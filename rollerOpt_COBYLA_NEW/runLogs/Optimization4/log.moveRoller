@@ -1,0 +1,26 @@
+/*---------------------------------------------------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+Build  : dev-cabe48fb62c1
+Exec   : surfaceTransformPoints -translate (0  1.637893180000000e-01 0) constant/triSurface/rollerOrig.stl constant/triSurface/roller.stl
+Date   : Apr 15 2019
+Time   : 11:29:31
+Host   : "Host"
+PID    : 28589
+I/O    : uncollated
+Case   : /home/tesla/OpenFOAM/tesla-dev/run/rollerOpt_COBYLA_NEW
+nProcs : 1
+sigFpe : Enabling floating point exception trapping (FOAM_SIGFPE).
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 10)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Reading surf from "constant/triSurface/rollerOrig.stl" ...
+Writing surf to "constant/triSurface/roller.stl" ...
+Translating points by (0 0.163789 0)
+End
+

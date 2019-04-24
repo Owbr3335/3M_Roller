@@ -1,0 +1,72 @@
+# Dakota Input File
+#
+#-----------------------------------------------------------------------------
+
+
+environment
+    tabular_graphics_data
+        tabular_graphics_file = 'dakotaData.dat'
+
+method
+
+    ### For LHS ###
+    #sampling
+    #    sample_type lhs 
+    #    samples     = 20
+    #    seed        = 123456
+
+    ### For QN ###
+    #    max_iterations = 1000
+    #    convergence_tolerance = 1e-3
+    #    optpp_q_newton
+#	search_method gradient_based_line_search
+
+    #### For COBYLA
+    max_iterations        = 1000
+    convergence_tolerance = 1e-6
+    coliny_cobyla
+        initial_delta     = 0.1
+        seed              = 123456
+
+model
+    single
+
+variables
+    continuous_design = 4
+        descriptors   =		'burnerT'	'rollerOmega'	'burnerUy'  'rollerDist'
+        initial_point =		1044.871688	14.86097779	0.1117753739	0.163789318
+        lower_bounds  =		300	 	3		0               0.135
+        upper_bounds  =		1800		20		1               0.175
+
+interface
+    fork
+        analysis_driver = 'dakota.sh'
+        parameters_file = 'params.in'
+        results_file    = 'results.out'
+    aprepro
+
+    deactivate active_set_vector
+
+responses
+    objective_functions = 1
+    
+    ### For LHS ###
+    #no_hessians
+    #no_gradients
+    
+    ### For QN ###
+   # numerical_gradients
+   #     method_source dakota
+   #     interval_type central
+   #     fd_gradient_step_size = 1e-3 
+   # no_hessians
+
+    ### For CONMINN ###
+    numerical_gradients
+        method_source dakota
+        interval_type central
+        fd_gradient_step_size = 1e-1
+	no_hessians
+	sense 'min'
+
+#-----------------------------------------------------------------------------

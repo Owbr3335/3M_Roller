@@ -1,0 +1,138 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.2.2                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version         2.0;
+    format          ascii;
+    class           dictionary;
+    object          controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+libs ( "libOpenFOAM.so" "libgroovyBC.so" ) ;
+
+application     fireFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime		2500;
+
+deltaT		1;
+
+writeControl    adjustableRunTime;
+
+writeInterval   10;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression uncompressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+graphFormat     raw;
+
+runTimeModifiable yes;
+
+adjustTimeStep  yes;
+
+maxCo           1;
+
+maxDeltaT       1e-1;
+
+allowSystemOperations true;
+
+functions
+{
+    patchCalcs
+    {
+        // Load the library containing the 'coded' functionObject
+        libs ("libutilityFunctionObjects.so");
+
+        type coded;
+        name patchCalcs;
+
+        codeEnd
+        #{
+            const volScalarField& T = mesh().lookupObject<volScalarField>("T");
+            Foam::label patchI = mesh().boundaryMesh().findPatchID("roller");
+            const Foam::fvPatch& currPatch = mesh().boundary()[patchI];
+
+	    Foam::scalar patchMeanYpos = 0;
+
+            forAll(currPatch,facei){
+                Foam::label faceCelli = currPatch.faceCells()[facei];
+                patchMeanYpos += mesh().C()[faceCelli].component(1);
+            }
+
+	    patchMeanYpos/=currPatch.size();
+
+            Foam::scalar patchMean = 0;
+            Foam::scalar patchNorm = 0;
+	    Foam::scalar patchVar = 0;
+	    Foam::scalar patchGrad = 0;
+	    Foam::scalarField patchGrads = mag(T.boundaryField()[patchI].snGrad());
+
+	    Foam::scalar n = 0;
+
+            forAll(currPatch,facei)
+	    {
+                Foam::label faceCelli = currPatch.faceCells()[facei];
+
+		if (mesh().C()[faceCelli].component(1) < patchMeanYpos)
+		{
+		    if (mesh().C()[faceCelli].component(0) > -0.0375 && mesh().C()[faceCelli].component(0) < 0.0375)
+		    {
+                        patchMean += T.internalField()[faceCelli];
+			patchGrad += patchGrads[facei]*mesh().magSf()[facei];
+
+			n += 1;
+		    }
+		}
+            }
+
+            patchMean/=n;
+	    patchGrad/=n;
+
+	    n = 0;
+
+            forAll(currPatch,facei)
+	    {
+                Foam::label faceCelli = currPatch.faceCells()[facei];
+
+                if (mesh().C()[faceCelli].component(1) < patchMeanYpos)
+                {
+                    if (mesh().C()[faceCelli].component(0) > -0.0375 && mesh().C()[faceCelli].component(0) < 0.0375)
+                    {   
+                        patchNorm += pow(T.internalField()[faceCelli]-patchMean,2);
+                    
+                        n += 1;
+                    }
+                }
+            }
+
+	    patchVar = patchNorm/n;
+
+            Info << "\nPatch Mean : " << patchMean << nl;
+            Info << "Patch Variance : " << patchVar << nl;
+	    Info << "Patch Gradient : " << patchGrad << nl;
+
+        #};
+    }
+}
+
+// ************************************************************************* //

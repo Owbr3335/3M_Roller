@@ -1,0 +1,50 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.2.2                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      thermophysicalProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+thermoType
+{
+    type            hePsiThermo;
+    mixture         reactingMixture;
+    transport       sutherland;
+    thermo          janaf;
+    energy          sensibleEnthalpy;
+    equationOfState perfectGas;
+    specie          specie;
+}
+
+inertSpecie N2;
+
+chemistryReader foamChemistryReader;
+
+//foamChemistryFile "$FOAM_CASE/chemkin/grimech30/chem_foam.inp";
+//foamChemistryThermoFile "$FOAM_CASE/chemkin/grimech30/therm_foam.dat";
+
+foamChemistryFile "$FOAM_CASE/chemkin/JL/chem_foam.inp";
+foamChemistryThermoFile "$FOAM_CASE/chemkin/JL/therm_foam.dat";
+
+//chemistryReader chemkinReader;
+
+//CHEMKINFile "$FOAM_CASE/chemkin/grimech30/chem.inp";
+//CHEMKINThermoFile "$FOAM_CASE/chemkin/grimech30/therm.dat";
+//CHEMKINTransportFile "$FOAM_CASE/chemkin/grimech30/tran.dat";
+
+//CHEMKINFile "$FOAM_CASE/chemkin/grimech30_30spec/chem.inp";
+//CHEMKINThermoFile "$FOAM_CASE/chemkin/grimech30_30spec/therm.dat";
+//CHEMKINTransportFile "$FOAM_CASE/chemkin/grimech30_30spec/tran.dat";
+
+
+// ************************************************************************* //

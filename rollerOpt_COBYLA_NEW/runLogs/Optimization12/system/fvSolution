@@ -1,0 +1,126 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+    "rho.*"
+    {
+        solver          diagonal;
+    }
+    
+    "p_rgh.*"
+    {
+        solver          PCG;
+        preconditioner
+        {
+            preconditioner  GAMG;
+            smoother        DIC;
+            tolerance       1e-6;
+            relTol          0;
+        }
+        //preconditioner  DIC;
+        tolerance       1e-6;
+        relTol          0;
+    }
+
+    ph_rgh
+    {
+        $p_rgh;
+        relTol          0;
+    }
+    
+    "pcorr.*"
+    {
+        $p_rgh;
+        relTol          0;
+    }
+    
+    "(U|h|Yi).*"
+    {
+        solver          PBiCGStab;
+        preconditioner  DILU;
+        //solver          smoothSolver;
+        //smoother        GaussSeidel;
+        tolerance       1e-8;
+        relTol          0;
+    }
+    
+    "(k|omega).*"
+    {
+        $U;
+        relTol          0;
+    }
+    
+    Ii
+    {
+        solver          GAMG;
+        smoother        DILU;
+        tolerance       1e-4;
+        relTol          0;
+        maxIter         1;
+    }
+    
+    "G.*"
+    {
+        solver          PCG;
+        preconditioner
+        {
+            preconditioner  GAMG;
+            smoother        DIC;
+            tolerance       1e-4;
+            relTol          0;
+        }
+        //preconditioner  DIC;
+        tolerance       1e-4;
+        relTol          0;
+    }
+}
+
+PIMPLE
+{
+    //PIMPLE controls
+    momentumPredictor yes;
+    turbOnFinalIterOnly yes;
+    hydrostaticInitialization yes;
+    nOuterCorrectors 1;
+    nCorrectors      2;
+    nNonOrthogonalCorrectors 0;
+    
+    //Custom controls
+    correctPhi  true;
+    maxDeltaT       1e-2;
+    startDyMLTS 1000000;
+    
+    maxDeltaT       1e-2;
+    maxCo           1;
+    alphaTemp       1;
+    maxDeltaT       1e-2;
+    rDeltaTDampingCoeff 1;
+}
+
+relaxationFactors
+{
+    fields
+    {
+    }
+    equations
+    {
+        ".*"                1;
+    }
+}
+
+// ************************************************************************* //

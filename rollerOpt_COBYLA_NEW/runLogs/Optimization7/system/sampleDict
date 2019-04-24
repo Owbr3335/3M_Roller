@@ -1,0 +1,92 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.2.2                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version         2.0;
+    format          ascii;
+    class           dictionary;
+    location        "system";
+    object          sampleDict;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+interpolationScheme cellPointFace;
+
+setFormat raw;
+
+type sets;
+    libs ("libsampling.so");
+
+sets
+(
+    left
+    {
+        type            face;
+        axis            y;
+        start           (0.31 0 0.05);
+        end             (0.31 0.0297 0.05);
+    }
+
+    center
+    {
+        type            face;
+        axis            y;
+        start           (0.3375 0 0.05);
+        end             (0.3375 0.0254 0.05);
+    }
+
+    right
+    {
+        type            face;
+        axis            y;
+        start           (0.365 0 0.05);
+        end             (0.365 0.0297 0.05);
+    }
+
+    rollerSurface_2d
+    {
+        type        circle;
+        origin          (0.3375 0.14605 0.05);     // Origin (x, y, z) in global cartesian co-ordinates
+        circleAxis  (0 0 1);                       // Axis of the circle
+        startPoint  (0.3375 0.0122 0.05);        // Defines start point on circle (x, y, z) in global cartesian co-ordinates
+        dTheta      5;                           // Sampling interval in degrees about the origin
+        axis        xyz;                         // This I don't know why is needed, but needs to be defined as well?
+    }
+
+);
+
+/*
+surfaceFormat raw;
+
+surfaces
+(
+    sliceCenterZ
+    {
+        type            plane;    // always triangulated
+        basePoint       (0.3375 0.5 0.05);
+        normalVector    (0 0 1);
+
+        //- Optional: restrict to a particular zone
+        // zone        zone1;
+
+        //- Optional: do not triangulate (only for surfaceFormats that support
+        //            polygons)
+        triangulate     false;
+    }
+);
+*/
+
+fields
+(
+    T
+    //U
+);
+
+
+// ************************************************************************* //

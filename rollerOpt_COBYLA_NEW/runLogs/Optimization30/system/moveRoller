@@ -1,0 +1,6 @@
+#!/bin/bash
+#
+#-----------------------------------------------------------------------------
+
+surfaceTransformPoints -translate "(0  1.619113961717875e-01 0)" \
+    constant/triSurface/rollerOrig.stl constant/triSurface/roller.stl
