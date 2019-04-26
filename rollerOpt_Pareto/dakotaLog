@@ -1,0 +1,124 @@
+Dakota version 6.5 released Nov 11 2016.
+Repository revision f928f89 (2016-11-10) built Nov 11 2016 04:27:33.
+Running MPI Dakota executable in serial mode.
+Start time: Fri Apr 26 15:09:18 2019
+
+-----------------------
+Begin DAKOTA input file
+system/dakotaDict
+-----------------------
+# Dakota Input File
+#
+#-----------------------------------------------------------------------------
+
+
+environment
+    tabular_graphics_data
+        tabular_graphics_file = 'dakotaData.dat'
+    top_method_pointer = 'PS'
+
+method
+    ### For LHS ###
+    #sampling
+    #    sample_type lhs 
+    #    samples     = 20
+    #    seed        = 123456
+
+    ### For QN ###
+    #    max_iterations = 1000
+    #    convergence_tolerance = 1e-3
+    #    optpp_q_newton
+#	search_method gradient_based_line_search
+
+    #### For COBYLA ###
+#    max_iterations        = 1000
+#    convergence_tolerance = 1e-6
+#    coliny_cobyla
+#        initial_delta     = 0.1
+#        seed              = 123456
+
+    ### For Pareto ###
+  id_method = 'PS'
+  pareto_set
+    method_pointer = 'NLP'
+    weight_sets =
+      1.0    0.0    0.0
+      0.0    1.0    0.0
+      0.0    0.0    1.0
+      0.333  0.333  0.333
+method
+  id_method = 'NLP'
+  coliny_cobyla 
+
+model
+    single
+
+variables
+    continuous_design = 4
+        descriptors   =		'burnerT'	'rollerOmega'	'burnerUy'  'rollerDist'
+        initial_point =		0.8             0.53	        0.7             0.375
+        lower_bounds  =		0	 	0		0               0
+        upper_bounds  =		1		1		1               1
+
+interface
+    fork
+        analysis_driver = 'dakota.sh'
+        parameters_file = 'params.in'
+        results_file    = 'results.out'
+    aprepro
+
+    deactivate active_set_vector
+
+responses
+    objective_functions = 3
+    analytic_gradients
+    no_hessians    
+
+
+    ### For LHS ###
+    #no_hessians
+    #no_gradients
+    
+    ### For QN ###
+   # numerical_gradients
+   #     method_source dakota
+   #     interval_type central
+   #     fd_gradient_step_size = 1e-3 
+   # no_hessians
+
+    ### For CONMINN ###
+#    numerical_gradients
+#        method_source dakota
+#        interval_type central
+#        fd_gradient_step_size = 1e-1
+#        no_hessians
+#        sense 'min'
+
+    ### Pareto ###
+
+#-----------------------------------------------------------------------------
+---------------------
+End DAKOTA input file
+---------------------
+
+Using Dakota input file 'system/dakotaDict'
+Writing new restart file dakota.rst
+
+Seed (system-generated) = 1556312958
+
+>>>>> Executing environment.
+
+>>>>> Running pareto_set iterator.
+
+>>>>> Running coliny_cobyla iterator.
+
+---------------------
+Begin Evaluation    1
+---------------------
+Parameters for evaluation 1:
+                      8.0000000000e-01 burnerT
+                      5.3000000000e-01 rollerOmega
+                      7.0000000000e-01 burnerUy
+                      3.7500000000e-01 rollerDist
+
+blocking fork: dakota.sh params.in results.out

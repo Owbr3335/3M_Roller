@@ -1,0 +1,86 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.2.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      p_rgh;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [1 -1 -2 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+
+    roller
+    {
+	//type		zeroGradient;
+	type		fixedFluxPressure;
+	value		$internalField;
+    }
+
+    burner
+    {
+	type		fixedFluxPressure;
+	value		$internalField;
+    }
+
+    top
+    {
+        type            prghTotalHydrostaticPressure;
+        p0              $internalField;
+        gamma           1;
+        value           $internalField;
+//	type		fixedFluxPressure;
+//	value		$internalField;
+    }
+
+
+    sides
+    {
+        type            prghTotalHydrostaticPressure;
+        p0              $internalField;
+        gamma           1;
+        value           $internalField;
+//	type            totalPressure;
+//        p0              $internalField;
+//        U               U;
+//        phi             phi;
+//        rho             rho;
+//        psi             none;
+//        gamma           1.4;
+//        value           $internalField;
+//	type		fixedFluxPressure;
+//	value		$internalField;
+    }
+
+    lowerOutlet
+    {
+        type            prghTotalHydrostaticPressure;
+        p0              $internalField;
+        gamma           1;
+        value           $internalField;
+//	type            totalPressure;
+//        p0              $internalField;
+//        U               U;
+//        phi             phi;
+//        rho             rho;
+//        psi             none;
+//        gamma           1.4;
+//        value           $internalField;
+//        type            fixedFluxPressure;
+//        value           $internalField;
+    }
+
+}
+
+// ************************************************************************* //

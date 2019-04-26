@@ -1,0 +1,20 @@
+#!/bin/bash
+
+>&2 echo "Creating Mesh"
+
+blockMesh > log.blockMesh
+
+source system/moveRoller > log.moveRoller
+
+snappyHexMesh -overwrite > log.snappyHexMesh
+
+flattenMesh > log.flattenMesh
+extrudeMesh > log.extrudeMesh
+
+rm constant/polyMesh/*Level
+
+topoSet -dict system/topoSetDict > log.topoSet
+createPatch -overwrite > log.overwrite
+
+renumberMesh -overwrite > log.renumberMesh
+

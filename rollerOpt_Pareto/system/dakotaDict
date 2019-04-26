@@ -1,0 +1,90 @@
+# Dakota Input File
+#
+#-----------------------------------------------------------------------------
+
+
+environment
+    tabular_graphics_data
+        tabular_graphics_file = 'dakotaData.dat'
+    top_method_pointer = 'PS'
+
+method
+    ### For LHS ###
+    #sampling
+    #    sample_type lhs 
+    #    samples     = 20
+    #    seed        = 123456
+
+    ### For QN ###
+    #    max_iterations = 1000
+    #    convergence_tolerance = 1e-3
+    #    optpp_q_newton
+#	search_method gradient_based_line_search
+
+    #### For COBYLA ###
+#    max_iterations        = 1000
+#    convergence_tolerance = 1e-6
+#    coliny_cobyla
+#        initial_delta     = 0.1
+#        seed              = 123456
+
+    ### For Pareto ###
+  id_method = 'PS'
+  pareto_set
+    method_pointer = 'NLP'
+    weight_sets =
+      1.0    0.0    0.0
+      0.0    1.0    0.0
+      0.0    0.0    1.0
+      0.333  0.333  0.333
+method
+  id_method = 'NLP'
+  coliny_cobyla 
+
+model
+    single
+
+variables
+    continuous_design = 4
+        descriptors   =		'burnerT'	'rollerOmega'	'burnerUy'  'rollerDist'
+        initial_point =		0.8             0.53	        0.7             0.375
+        lower_bounds  =		0	 	0		0               0
+        upper_bounds  =		1		1		1               1
+
+interface
+    fork
+        analysis_driver = 'dakota.sh'
+        parameters_file = 'params.in'
+        results_file    = 'results.out'
+    aprepro
+
+    deactivate active_set_vector
+
+responses
+    objective_functions = 3
+    analytic_gradients
+    no_hessians    
+
+
+    ### For LHS ###
+    #no_hessians
+    #no_gradients
+    
+    ### For QN ###
+   # numerical_gradients
+   #     method_source dakota
+   #     interval_type central
+   #     fd_gradient_step_size = 1e-3 
+   # no_hessians
+
+    ### For CONMINN ###
+#    numerical_gradients
+#        method_source dakota
+#        interval_type central
+#        fd_gradient_step_size = 1e-1
+#        no_hessians
+#        sense 'min'
+
+    ### Pareto ###
+
+#-----------------------------------------------------------------------------
